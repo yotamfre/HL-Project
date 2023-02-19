@@ -26,10 +26,11 @@ def ShowData():
     images, labels = dataiter.next()
     images = images.numpy()
 
+    #
     for i in range(4000):
         for r in range(28):
             for c in range(28):
-                if (images[i][0][r][c] > 0):
+                if (images[i][0][r][c] > .15):
                     images[i][0][r][c] = 1
                 else:
                     images[i][0][r][c] = -1
