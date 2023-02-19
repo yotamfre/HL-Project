@@ -1,6 +1,6 @@
 from tkinter import *
 import numpy as np
-from LogisticRegression import *
+import LogisticRegression
 
 def makeMainMenu():
     frm = Tk()
@@ -65,7 +65,8 @@ def makeCanvas():
 
     def AddClicked():
         makeImage(pixelList)
-        print(predict(image,theta))
+        vec = LogisticRegression.imageToVecotr(image)
+        print(LogisticRegression.predict(vec,theta))
         
 
     cancelButton = Button(frm, text = "Cancel", font = "Bold", bg = "Blue", command = cancelClicked, width = buttonWidth, height = buttonHeight)
@@ -77,34 +78,30 @@ def makeCanvas():
     canvas.bind("<B1-Motion>", paint)
 
 
-def makeImage(lst):
-    size = 24
+def _makeImage(lst):
+    size = 28
 
-    startX = 600
-    endX = 1800
+    startX = 500
+    endX = 1900
     sizeX = int((endX - startX) / size)
 
     startY = 0
-    endY = 408
+    endY = 420
     sizeY = int((endY - startY) / size)
 
 #compresses the images
-    for r in range(size):
-        for c in range(size):
-            count = 0
-            for x in range(sizeX):
-                xCoor = r * sizeX + startX + x
-                for y in range(sizeY):
-                    yCoor = c * sizeY + startY + y
+def makeImage(lst):
+    image = np.zeros((28,28))
+    image = image - 1
 
-                    if (lst.count((xCoor, yCoor))):
-                        count += 40
-                    else:
-                        count -= 1
-            count = count / (sizeX * sizeY) 
-            image[c][r] = count
+    for i in range(len(lst)):
+        tup = lst.pop()
+        image[int((tup[1] + 200) / 28)][int((tup[0] - 1200) / 28)] = 1
 
-theta = ShowData()
-image = np.zeros((24,24))
+
+#code starts here
+theta = LogisticRegression.ShowData()
+image = np.zeros((28,28))
+
 makeMainMenu()
 mainloop()
