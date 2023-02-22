@@ -30,7 +30,7 @@ def ShowData():
     for i in range(4000):
         for r in range(28):
             for c in range(28):
-                if (images[i][0][r][c] > .15):
+                if (images[i][0][r][c] > .17):
                     images[i][0][r][c] = 1
                 else:
                     images[i][0][r][c] = -1
@@ -71,7 +71,7 @@ def ShowData():
         weights = np.random.rand(K,N)
 
         #Training Iterations
-        trainIters = 1000
+        trainIters = 400
 
         cost = np.zeros(trainIters)
 
@@ -106,7 +106,7 @@ def ShowData():
 
 
 
-        return (weights,cost)
+        return weights, cost
 
     def predict(X, weights):
         def sigmoid(x):
@@ -114,15 +114,11 @@ def ShowData():
         
         return np.argmax(sigmoid(np.dot(X, weights.T)), axis=1)
 
-    theta = one_vs_all_logreg(X, Yvec, 20, .00000001)
+    weightMat, costList = one_vs_all_logreg(X, Yvec, 20, .00000001)
 
     #plots cost
-    costList = theta[1]
     plt.plot(costList)
     plt.show()
-
-    weightMat = theta[0]
-
 
     #checks the model on the validation set
     predTest = predict(Xval, weightMat)
