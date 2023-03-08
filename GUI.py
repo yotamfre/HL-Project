@@ -1,6 +1,6 @@
 from tkinter import *
 import numpy as np
-import LogisticRegression
+from LogisticRegression import *
 
 def makeMainMenu():
     frm = Tk()
@@ -65,8 +65,8 @@ def makeCanvas():
 
     def AddClicked():
         makeImage(pixelList)
-        vec = LogisticRegression.imageToVecotr(image)
-        print(LogisticRegression.predict(vec,theta))
+        vec = model.toVector(image)
+        print(model.predict(vec))
         
 
     cancelButton = Button(frm, text = "Cancel", font = "Bold", bg = "Blue", command = cancelClicked, width = buttonWidth, height = buttonHeight)
@@ -76,18 +76,6 @@ def makeCanvas():
     AddButton.place(x = 1675,y = 600)
 
     canvas.bind("<B1-Motion>", paint)
-
-
-def _makeImage(lst):
-    size = 28
-
-    startX = 500
-    endX = 1900
-    sizeX = int((endX - startX) / size)
-
-    startY = 0
-    endY = 420
-    sizeY = int((endY - startY) / size)
 
 #compresses the images
 def makeImage(lst):
@@ -100,7 +88,8 @@ def makeImage(lst):
 
 
 #code starts here
-theta = LogisticRegression.ShowData()
+model = DigitRecognition()
+model.train()
 image = np.zeros((28,28))
 
 makeMainMenu()
