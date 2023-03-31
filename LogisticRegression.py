@@ -24,17 +24,17 @@ class DigitRecognition():
         self.trainloader = torch.utils.data.DataLoader(trainset, batch_size=64, shuffle=True)
         self.valloader = torch.utils.data.DataLoader(valset, batch_size=64, shuffle=True)
 
-        self.model = nn.Sequential(nn.Linear(784, 128),
-                                 nn.ReLU(),
-                                 nn.Linear(128,10),
-                                 nn.LogSoftmax(dim=1))
+        self.model = nn.Sequential( nn.Linear(784, 128),
+                                    nn.ReLU(),
+                                    nn.Linear(128,10),
+                                    nn.LogSoftmax(dim=-1))
 
         self.lossFunc = nn.CrossEntropyLoss()
         self.optimizer = optim.SGD(self.model.parameters(), lr = 1e-3, momentum=0.9)
 
 
     def train(self):
-        numIters = 5
+        numIters = 4
         lossList = []
 
         for i in range(numIters):
@@ -50,30 +50,27 @@ class DigitRecognition():
                 loss.backward()
                 self.optimizer.step()
 
-                runLoss += loss
-            lossList.append(runLoss.detach().numpy())
+                lossList.append(loss.detach().numpy())
             print("training iteration number " + str(i))
 
         plt.plot(lossList)
         plt.show()
 
         #computes accuracy rate on validation set
-        dataiter = iter(self.valloader)
-        images, labels = dataiter.next()
-        images = images.view(images.shape[0], -1)
+        valImages, valLabels = next(iter(self.valloader))
+        valImages = valImages.view(valImages.shape[0], -1)
 
-        out = torch.argmax(self.model(images), 1)
+        valOut = torch.argmax(self.model(valImages), 1)
 
         numCorrect = 0
-        for i in range(out.size()[0]):
-            if (out[i] == labels[i]):
+        for i in range(valOut.size()[0]):
+            if (valOut[i] == valLabels[i]):
                 numCorrect += 1
 
         print("percent correct in the validation set is " + str(numCorrect / .64))
 
 
     def predict(self, inputs):
-        return torch.argmax(self.model(torch.softmax(inputs)), dim=1)
+        return torch.argmax(self.model(nn.functional.normalize(inputs, dim=0)))
     
-    def toVector(image):
-        return image.view(image.shape[0], -1)
+    
